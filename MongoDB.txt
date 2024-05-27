@@ -1,0 +1,30 @@
+#TO READ ALL DOCUMENTS FROM THE DATABASE(dbFunctions.js)
+
+getAllDocs: async () => {
+    return await db.collection(coll).find().toArray()
+}
+
+
+#WEB SERVER ROUTE(server.js)
+app.get("/api/allnames", async (req, res) => {
+    const docs = await dbFunctions.getAllDocs()
+    res.json(docs) 
+})
+
+
+#JAVASCRIPT FETCH CALL TO READ DATA INTO THE BROWSER HTML TABLE(APP.JS)
+
+fetch("http://localhost:3000/api/allnames/")
+    .then(res => res.json())
+    .then(docs => {
+        buildTable(docs)
+        return docs.length
+    })
+    .then(n => {
+        document.getElementById("status").innerHTML = "Loaded " + n + " row(s)!"
+        if (n > 0) {
+            selectRow()
+            scrollToSelection()
+        }
+    })
+    .catch(error => console.error("Error:", error));
